@@ -1,7 +1,7 @@
 import psycopg2 as pg2
 import logging
 
-#test
+#tes
 class Db:
     # idf - inverse document frequency
     # t = term ביטוי
