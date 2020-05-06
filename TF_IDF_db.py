@@ -11,7 +11,7 @@ class Db:
 
     connection = None
 
-    def __init__(self, password, host=localhost, user=postgres, database=database):
+    def __init__(self, password, host='localhost', user='postgres', database='database'):
         try:
             self.connection = pg2.connect(database="database",
                                           host="host",
@@ -22,8 +22,8 @@ class Db:
             print("Opened database successfully")
 
         except:
-            logging.error("connect failed") as e
-            print(e)
+            logging.error("connect failed")
+            # print(e)
 
     def connect(self):
         return self.connection
@@ -35,7 +35,7 @@ class Db:
         cur = self.connection.cursor()
         cur.execute("INSERT INTO TF_IDF (ID,TERM ,DOCU,FREQUENCY) VALUES (1, 'SPORT', 'STRING VERY LONG', '5.3' )");
         self.connection.commit()
-        disconnect()
+
 
     def created_table(self):
         cur = self.connection.cursor()
@@ -47,9 +47,9 @@ class Db:
         print("Table created successfully")
 
         self.connection.commit()
-        disconnect()
 
-    def select_from():
+
+    def select_from(self):
         try:
             cur = self.connection.cursor()
             cur.execute("""SELECT * FROM TF_IDF""")
@@ -58,7 +58,7 @@ class Db:
         except:
             logging.error("select failed")
 
-    def print_all(self):
+
         rows = cur.fetchall()
         for row in rows:
             print(row)
