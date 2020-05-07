@@ -1,64 +1,27 @@
-import psycopg2 as pg2
-import logging
+import psycopg2
 
-#tes
-class Db:
-    # idf - inverse document frequency
-    # t = term ביטוי
-    # d =  document מסמך
-    # D = all documents  קבוצת כל המסמכים
-    # N = count(D) כמה מסמכים יש ליd0, d1, d2 ... dn
-
-    connection = None
-
-    def __init__(self, password, host='localhost', user='postgres', database='database'):
-        try:
-            self.connection = pg2.connect(database="database",
-                                          host="host",
-                                          user="user",
-                                          port="5432",
-                                          password=password
-                                          )
-            print("Opened database successfully")
-
-        except:
-            logging.error("connect failed")
-            # print(e)
-
-    def connect(self):
-        return self.connection
-
-    def disconnect(self):
-        self.connection.close()
-
-    def execute(self):
-        cur = self.connection.cursor()
-        cur.execute("INSERT INTO TF_IDF (ID,TERM ,DOCU,FREQUENCY) VALUES (1, 'SPORT', 'STRING VERY LONG', '5.3' )");
-        self.connection.commit()
+conn = psycopg2.connect("dbname='postgres' user='postgres'  host='localhost'")
+cur = conn.cursor()
 
 
-    def created_table(self):
-        cur = self.connection.cursor()
-        cur.execute('''CREATE TABLE TF_IDF
-              (ID INT PRIMARY KEY     NOT NULL,
-              TERM           TEXT    NOT NULL,
-              DOCU           TEXT     NOT NULL,
-              FREQUENCY      FLOAT,);''')
-        print("Table created successfully")
+def created_table():
+    cur.execute("CREATE TABLE tf_idf ID INT PRIMARY KEY     NOT NULL TERM           TEXT    NOT NULL, DOCU           TEXT     NOT NULL, FREQUENCY      FLOAT,);")
+    print("Table created successfully")
 
-        self.connection.commit()
+def insert_a(table = 'NEW_TABLE',culom='A' ,value = 0):
+    cur.execute(f"insert into {table} ({culom}) values ({value})" )
 
-
-    def select_from(self):
-        try:
-            cur = self.connection.cursor()
-            cur.execute("""SELECT * FROM TF_IDF""")
-
-            [print(row) for row in cur.fetchall()]
-        except:
-            logging.error("select failed")
+def join_all():
+    cur.execute("select * from words_pass as w join chaim_projct as c on w.word = c.word")
 
 
-        rows = cur.fetchall()
-        for row in rows:
-            print(row)
+def select_all( NEW_TABLE =  'NEW_TABLE' ):
+    cur.execute(f"select * from {NEW_TABLE}")
+
+insert_a(value = 3)
+conn.commit()
+[print(row) for row in cur.fetchall()]
+
+conn.close()
+
+
