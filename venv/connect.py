@@ -19,29 +19,56 @@ except:
 cursor = conn.cursor()
 
 # Create a table
-try:
-    cursor.execute("CREATE TABLE all_docs(doc_id serial PRIMARY KEY, docs TEXT, label VARCHAR);")
-    print("Finished creating table all_doc")
-except:
-    logging.error("creating table all_doc failed")
+def create_a_table():
+    try:
+        cursor.execute("CREATE TABLE all_docs"
+                       "(doc_id serial PRIMARY KEY,"
+                       "docs TEXT, "
+                       "label VARCHAR);")
+        print("Finished creating table all_doc")
+    except:
+        logging.error("creating table all_doc failed")
 
-try:
-    cursor.execute("CREATE TABLE tf(term VARCHAR, score FLOAT);")
-    print("Finished creating table tf")
-except:
-    logging.error("creating table tf failed")
+def create_tf_table():
+    try:
+        cursor.execute("CREATE TABLE tf"
+                       "(term VARCHAR, "
+                       "score FLOAT);")
+        print("Finished creating table tf")
+    except:
+        logging.error("creating table tf failed")
+def create_idf_table():
+    try:
+        cursor.execute("CREATE TABLE idf"
+                       "(doc_id INT, "
+                       "term VARCHAR, "
+                       "score FLOAT);")
+        print("Finished creating table idf")
+    except:
+        logging.error("creating table idf failed")
 
-try:
-    cursor.execute("CREATE TABLE idf(doc_id INT, term VARCHAR, score FLOAT);")
-    print("Finished creating table idf")
-except:
-    logging.error("creating table idf failed")
+def create_score_table():
+    try:
+        cursor.execute("CREATE TABLE score"
+                       "(term VARCHAR, "
+                       "sport FLOAT,"
+                       " machine FLOAT, "
+                       "other FLOAT);")
+        print("Finished creating table score")
+    except:
+        logging.error("creating table score failed")
 
-try:
-    cursor.execute("CREATE TABLE score(term VARCHAR, sport FLOAT, machine FLOAT, other FLOAT);")
-    print("Finished creating table score")
-except:
-    logging.error("creating table score failed")
+def insert(table_name,term,score,label):
+    cursor.execute(f"INSERT INTO {table_name} (term, {label}) VALUES (%s, %s);", (term, score))
+
+def update(table_name,term,label,score):
+    cursor.execute(f"UPDATE {table_name} SET {label} = {score} WHERE term = '{term}'")
+
 conn.commit()
-cursor.close()
-conn.close()
+
+
+def select_all(TABLE='NEW_TABLE'):
+    cursor.execute(f"select * from {TABLE}")
+
+select_all(TABLE= 'score')
+[print(row) for row in cursor.fetchall()]
