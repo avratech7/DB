@@ -1,27 +1,55 @@
 import psycopg2
+import logging
 
-conn = psycopg2.connect("dbname='postgres' user='postgres'  host='localhost'")
-cur = conn.cursor()
+# Update connection string information
+host = "drona.db.elephantsql.com"
+dbname = "lnhiqqex"
+user = "lnhiqqex"
+password = "iP6W0C7_-6rsUI9dK7JN7WI6qxPVEx-q"
+
+# Construct connection string
+conn_string = f"host={host} user={user} dbname={dbname} password={password} "
+try:
+    conn = psycopg2.connect(conn_string)
+    print("Connection established")
+except:
+    logging.error("connection failed")
+
+cursor = conn.cursor()
 
 
-def created_table():
-    cur.execute("CREATE TABLE tf_idf ID INT PRIMARY KEY     NOT NULL TERM           TEXT    NOT NULL, DOCU           TEXT     NOT NULL, FREQUENCY      FLOAT,);")
-    print("Table created successfully")
+# Create  new a table
+def create_new_table(new_table, culome):
+    print(culome)
+    try:
+        cursor.execute(f"CREATE TABLE {new_table}"
+                       "(id serial PRIMARY KEY,"
+                       f"{culome});")
+        print(f"Finished creating table {new_table} and culoms {culome}")
+    except:
+        logging.error(f"creating table {new_table} failed and culoms {culome}")
 
-def insert_a(table = 'NEW_TABLE',culom='A' ,value = 0):
-    cur.execute(f"insert into {table} ({culom}) values ({value})" )
 
-def join_all():
-    cur.execute("select * from words_pass as w join chaim_projct as c on w.word = c.word")
+def select_all(TABLE):
+    cur.execute(f"select * from {TABLE}")
 
 
-def select_all( NEW_TABLE =  'NEW_TABLE' ):
-    cur.execute(f"select * from {NEW_TABLE}")
+def insert_into(table='idf', culomA='term', culomB='score', valueA='naon', valueB='0'):
+    try:
+        cursor.execute(f"insert into {table} ({culomA}, {culomB}) values ('{valueA}' ,{valueB})")
+        print(f'insert into {table} ({culomA}, {culomB}) values ({valueA} ,{valueB})')
+        select_table(table)
+    except:
+        logging.error("insert  failed")
+        
 
-insert_a(value = 3)
+def join_table(tableA, tableB, word):
+    cur.execute(f"select * from {tableA} as a "
+                f"join {tableB} as b "
+                f"on a.{word} = b.{word}")
+
+
 conn.commit()
 [print(row) for row in cur.fetchall()]
 
 conn.close()
-
-
