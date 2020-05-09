@@ -5,9 +5,9 @@ from collections import namedtuple
 cur = connect.cursor;
 def create_record(obj, fields):
     ''' given obj from db returns named tuple with fields mapped to values '''
-    Record = namedtuple("Record", fields)
+    Score = namedtuple("Score", fields)
     mappings = dict(zip(fields, obj))
-    return Record(**mappings)
+    return Score(**mappings)
 def save_docs(list):
         key = list[0]
         cur.execute(f"INSERT INTO all_docs (docs, label) VALUES (%s, %s);", (list[0], list[1]))
@@ -60,15 +60,7 @@ def get_tfidf(**label):
 def get_count_doc(label):
     cur.execute(f"""SELECT * FROM all_docs WHERE label = '{label}';""")
     return cur.rowcount
-list_of_doc = ["ball","sport"]
-list_of_doc2 = ["tenis","sport"]
-# save_docs(list_of_doc2)
-list_of_dictionaries =[{"ball":["sport",0.4]}, {"corona":["medicine",0.3]},{"rachel":["other",0.12]}]
-save_tfidf(list_of_dictionaries)
-get_tfidf()
-get_tfidf(label="sport")
-get_tfidf(term= "corona")
-get_count_doc("sport")
+
 connect.conn.commit()
 connect.cursor.close()
 connect.conn.close()
