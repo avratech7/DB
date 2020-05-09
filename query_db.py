@@ -8,9 +8,8 @@ def create_record(obj, fields):
     Score = namedtuple("Score", fields)
     mappings = dict(zip(fields, obj))
     return Score(**mappings)
-def save_docs(list):
-        key = list[0]
-        cur.execute(f"INSERT INTO all_docs (docs, label) VALUES (%s, %s);", (list[0], list[1]))
+def save_docs(docs,label):
+        cur.execute(f"INSERT INTO all_docs (docs, label) VALUES (%s, %s);", docs, label))
 def save_tfidf(list_of_dictionaries):
     for dictionaries in list_of_dictionaries:
         key = list(dictionaries.keys())[0]
