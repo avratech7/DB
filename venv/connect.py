@@ -28,38 +28,55 @@ def create_a_table(table_name,list_of_cloum,definition):
     except psycopg2.errors.DuplicateTable as p:
         print(p)
     conn.commit()
+    cursor.close()
+    conn.close()
 
 def add_cloum(table_name, cloum_name, definition):
     conn = connet_to_host(host, user, dbname, password)
     cursor = conn.cursor()
     cursor.execute(f"ALTER TABLE {table_name} ADD COLUMN {cloum_name} {definition};")
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 def drop_table(table_name):
     conn = connet_to_host(host, user, dbname, password)
     cursor = conn.cursor()
     cursor.execute(f"DROP TABLE IF EXISTS {table_name};")
     print("Finished dropping table (if existed)")
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 def insert(table_name,cloum_name,value):
     conn = connet_to_host(host, user, dbname, password)
     cursor = conn.cursor()
     cursor.execute(f"INSERT INTO {table_name} ({cloum_name}) VALUES {value};")
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 def update_were(table_name,cloum_name,value,cloum_to_comp,value_to_comp):
     conn = connet_to_host(host, user, dbname, password)
     cursor = conn.cursor()
     cursor.execute(f"UPDATE {table_name} SET {cloum_name} = {value} WHERE {cloum_to_comp} = '{value_to_comp}'")
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 def print_tables(select_string):
     conn = connet_to_host(host, user, dbname, password)
     cursor = conn.cursor()
     cursor.execute(select_string)
-    colnames = [desc[0] for desc in cur.description]
-    rows = cur.fetchall()
+    colnames = [desc[0] for desc in cursor.description]
+    rows = cursor.fetchall()
     result = []
     [result.append(dict(zip(colnames, row))) for row in rows]
-    for item in result:
-        print(item)
+    [print(item) for item in result]
+    conn.commit()
+    cursor.close()
+    conn.close()
+
 
 def select_all(TABLE='NEW_TABLE'):
     try:

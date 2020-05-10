@@ -1,22 +1,25 @@
 import psycopg2
 import logging
-import connect
+import connect as con
 # cur = connect.cursor;
 
 def save_docs(doc,label):
-        conn = connect.connet_to_host(host, user, dbname, password)
+        conn = con.connet_to_host(con.host, con.user, con.dbname, con.password)
         cur = conn.cursor()
         cur.execute(f"INSERT INTO score (doc,label) VALUES ({doc},{label}) ")
+        conn.commit()
+        cur.close()
+        conn.close()
 
 
 def get_docs():
-        connect.print_tables("""SELECT * FROM all_docs""")
+        con.print_tables("""SELECT * FROM all_docs""")
 
 def get_doc_by_label(label):
-         connect.print_tables(f"""SELECT docs, label FROM all_docs WHERE label= '{label}';""")
+         con.print_tables(f"""SELECT docs, label FROM all_docs WHERE label= '{label}';""")
 
 def save_tfidf(list_of_dictionaries):
-    conn = connect.connet_to_host(host, user, dbname, password)
+    conn = con.connet_to_host(con.host, con.user, con.dbname, con.password)
     cur = conn.cursor()
     for dictionaries in list_of_dictionaries:
         term = list(dictionaries.keys())[0]
@@ -35,11 +38,15 @@ def save_tfidf(list_of_dictionaries):
                 print(current_avg)
                 cur.execute( f"UPDATE score SET ({dictionaries[term][0]}, verison_{dictionaries[term][0]}) = ({current_avg},{updade_verison}) WHERE term = '{term}'")
 
+    conn.commit()
+    cur.close()
+    conn.close()
+
 def get_tfidf(**label):
-    conn = connect.connet_to_host(connect.host, connect.user, connect.dbname, connect.password)
+    conn = con.connet_to_host(con.host, con.user, con.dbname, con.password)
     cur = conn.cursor()
     if not label:
-        connect.print_tables("""SELECT * FROM score""")
+        con.print_tables("""SELECT * FROM score""")
     else:
         t = list(label.keys())
         for i in t:
@@ -50,25 +57,29 @@ def get_tfidf(**label):
                     logging.error("select failed")
                 if cur.rowcount > 0 :
                     if len(label)==1:
-                        connect.print_tables(cur,f"""SELECT * FROM score WHERE term = '{label[i]}';""")
+                        con.print_tables(f"""SELECT * FROM score WHERE term = '{label[i]}';""")
                 else:
                     print("The term does not exist in the table")
             elif i == "label":
                 try:
-                    connect.print_tables(cur,f"""SELECT term, {label[i]} FROM score;""""")
+                    con.print_tables(f"""SELECT term, {label[i]} FROM score;""""")
                 except psycopg2.errors.UndefinedColumn as e:
                     print(e)
             else:
                 print(f"{i} is not key Only label or term must be defined")
+    conn.commit()
+    cur.close()
+    conn.close()
 
 def get_count_doc(label):
-    conn = connect.connet_to_host(connect.host, connect.user, connect.dbname, connect.password)
+    conn = con.connet_to_host(con.host, con.user, con.dbname, con.password)
     cur = conn.cursor()
     cur.execute(f"""SELECT * FROM all_docs WHERE label = '{label}';""")
     return cur.rowcount
+    conn.commit()
+    cur.close()
+    conn.close()
 
 get_tfidf()
 
-connect.conn.commit()
-connect.cursor.close()
-connect.conn.close()
+
