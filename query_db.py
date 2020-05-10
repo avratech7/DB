@@ -61,7 +61,7 @@ def get_count_doc(label):
     cur.execute(f"""SELECT * FROM all_docs WHERE label = '{label}';""")
     return cur.rowcount
 
-
+get_tfidf()
 
 connect.conn.commit()
 connect.cursor.close()
