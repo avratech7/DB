@@ -1,21 +1,23 @@
 import psycopg2
 import logging
 import connect
-from collections import namedtuple
-cur = connect.cursor;
+# cur = connect.cursor;
 
 def save_docs(doc,label):
-        connect.insert("all_docs","doc",doc)
-        connect.insert("all_docs", "label", doc)
+        conn = connect.connet_to_host(host, user, dbname, password)
+        cur = conn.cursor()
+        cur.execute(f"INSERT INTO score (doc,label) VALUES ({doc},{label}) ")
 
 
 def get_docs():
-        connect.print_tables(cur,"""SELECT * FROM all_docs""")
+        connect.print_tables("""SELECT * FROM all_docs""")
 
 def get_doc_by_label(label):
-         connect.print_tables(cur,f"""SELECT docs, label FROM all_docs WHERE label= '{label}';""")
+         connect.print_tables(f"""SELECT docs, label FROM all_docs WHERE label= '{label}';""")
 
 def save_tfidf(list_of_dictionaries):
+    conn = connect.connet_to_host(host, user, dbname, password)
+    cur = conn.cursor()
     for dictionaries in list_of_dictionaries:
         term = list(dictionaries.keys())[0]
         cur.execute(f"""SELECT term FROM score WHERE term = '{term}';""")
@@ -34,8 +36,10 @@ def save_tfidf(list_of_dictionaries):
                 cur.execute( f"UPDATE score SET ({dictionaries[term][0]}, verison_{dictionaries[term][0]}) = ({current_avg},{updade_verison}) WHERE term = '{term}'")
 
 def get_tfidf(**label):
+    conn = connect.connet_to_host(connect.host, connect.user, connect.dbname, connect.password)
+    cur = conn.cursor()
     if not label:
-        connect.print_tables(cur,"""SELECT * FROM score""")
+        connect.print_tables("""SELECT * FROM score""")
     else:
         t = list(label.keys())
         for i in t:
@@ -58,6 +62,8 @@ def get_tfidf(**label):
                 print(f"{i} is not key Only label or term must be defined")
 
 def get_count_doc(label):
+    conn = connect.connet_to_host(connect.host, connect.user, connect.dbname, connect.password)
+    cur = conn.cursor()
     cur.execute(f"""SELECT * FROM all_docs WHERE label = '{label}';""")
     return cur.rowcount
 
