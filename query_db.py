@@ -22,12 +22,17 @@ def save_tfidf(list_of_dictionaries):
         if cur.rowcount == 0:
             cur.execute(f"INSERT INTO score (term,{dictionaries[term][0]}) VALUES ({term},{dictionaries[term][1]}) ")
         else:
-            cur.execute(f"""SELECT verison, {dictionaries[term][0]} FROM score WHERE term = '{term}';""")
+            cur.execute(f"""SELECT verison_{dictionaries[term][0]}, {dictionaries[term][0]} FROM score WHERE term = '{term}';""")
             current_verison = list(cur.fetchall()[0])
-            updade_verison = current_verison[0] + 1
-            current_avg =  ((current_verison[0] * current_verison[1]) + dictionaries[term][1]) / updade_verison
-            cur.execute( f"UPDATE score SET ({dictionaries[term][0]}, verison) = ({current_avg},{updade_verison}) WHERE term = '{term}'")
-#
+            if current_verison[0] is None:
+                cur.execute( f"UPDATE score SET ({dictionaries[term][0]}, verison_{dictionaries[term][0]}) = ({dictionaries[term][1]},1) WHERE term = '{term}'")
+            else:
+                updade_verison = current_verison[0] + 1
+                print((current_verison[0] * current_verison[1]) + dictionaries[term][1])
+                current_avg =  ((current_verison[0] * current_verison[1]) + dictionaries[term][1]) / updade_verison
+                print(current_avg)
+                cur.execute( f"UPDATE score SET ({dictionaries[term][0]}, verison_{dictionaries[term][0]}) = ({current_avg},{updade_verison}) WHERE term = '{term}'")
+
 def get_tfidf(**label):
     if not label:
         connect.print_tables(cur,"""SELECT * FROM score""")
