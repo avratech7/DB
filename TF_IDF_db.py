@@ -46,7 +46,7 @@ def create_new_table(new_table, colum):
         logging.error(f"creating table {new_table} failed and culoms {colum}")
 
 
-create_new_table('tfidf_test',"label VARCHAR , term VARCHAR, score FLOAT")
+# create_new_table('tfidf_test',"label VARCHAR , term VARCHAR, score FLOAT")
 
 
 # add  where
