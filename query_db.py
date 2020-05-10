@@ -26,7 +26,7 @@ def save_tfidf(list_of_dictionaries):
             current_verison = list(cur.fetchall()[0])
             updade_verison = current_verison[0] + 1
             current_avg =  ((current_verison[0] * current_verison[1]) + dictionaries[term][1]) / updade_verison
-            cur.execute( f"UPDATE score SET ({dictionaries[term][0]}, verison) = ({dictionaries[term][1]},{current_avg}) WHERE term = '{term}'")
+            cur.execute( f"UPDATE score SET ({dictionaries[term][0]}, verison) = ({current_avg},{updade_verison}) WHERE term = '{term}'")
 #
 def get_tfidf(**label):
     if not label:
