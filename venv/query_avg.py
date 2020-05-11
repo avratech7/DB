@@ -6,13 +6,13 @@ cur = con.cursor
 
 
 
-def save_tfidf_avg(list_of_dictionaries):
+def save_tfidf_avg_dict(list_of_dictionaries):
     for dictionaries in list_of_dictionaries:
         term = list(dictionaries.keys())[0]
         cur.execute(f"""SELECT term FROM score WHERE term = '{term}';""")
         if cur.rowcount == 0:
             try:
-                cur.execute(f"INSERT INTO score (term,{dictionaries[term][0]}) VALUES ('{term}','{dictionaries[term][1]}') ")
+                cur.execute(f"INSERT INTO score (term,{dictionaries[term][0]},verison_{dictionaries[term][0]}) VALUES ('{term}','{dictionaries[term][1]}',1) ")
                 print("term saved successfully")
             except:
                print(sys.exc_info()[1])
@@ -28,6 +28,30 @@ def save_tfidf_avg(list_of_dictionaries):
                 current_avg =  ((current_verison[0] * current_verison[1]) + dictionaries[term][1]) / updade_verison
                 # print(current_avg)
                 cur.execute( f"UPDATE score SET ({dictionaries[term][0]}, verison_{dictionaries[term][0]}) = ({current_avg},{updade_verison}) WHERE term = '{term}'")
+
+
+def save_tfidf_avg(list_of_listes):
+    for _list in list_of_listes:
+        term = _list[0]
+        cur.execute(f"""SELECT term FROM score WHERE term = '{term}';""")
+        if cur.rowcount == 0:
+            try:
+                cur.execute(f"INSERT INTO score (term,{_list[1]},verison_{_list[1]}) VALUES ('{term}','{_list[2]}',1) ")
+                print("term saved successfully")
+            except:
+               print(sys.exc_info()[1])
+
+        else:
+            cur.execute(f"""SELECT verison_{_list[1]}, {_list[1]} FROM score WHERE term = '{term}';""")
+            current_verison = list(cur.fetchall()[0])
+            if current_verison[0] is None:
+                cur.execute(f"UPDATE score SET ({_list[1]}, verison_{_list[1]}) = ({_list[2]},1) WHERE term = '{term}'")
+            else:
+                updade_verison = current_verison[0] + 1
+                # print((current_verison[0] * current_verison[1]) + dictionaries[term][1])
+                current_avg =  ((current_verison[0] * current_verison[1]) + _list[2]) / updade_verison
+                # print(current_avg)
+                cur.execute( f"UPDATE score SET ({_list[1]}, verison_{_list[1]}) = ({current_avg},{updade_verison}) WHERE term = '{term}'")
 
 
 
@@ -82,13 +106,15 @@ def get_tfidf_avg(**dictionery):
 
 
 list_of_dictionaries =[{"ball":["sport",0.4]}, {"corona":["medicine",0.3]},{"rachel":["other",0.12]}]
-# save_tfidf_avg(list_of_dictionaries)
+list_of_listes =[["cat","sport",0.1], ["cat","medicine",0.01],["play","other",0.12]]
 
-# get_tfidf_avg(label = "sport")
-# get_tfidf_avg(term = "ball")
-# print(get_tfidf_avg(label = "sport", term= "ball"))
+save_tfidf_avg(list_of_listes)
+
+get_tfidf_avg(label = "sport")
+get_tfidf_avg(term = "cat")
+print(get_tfidf_avg(label = "sport", term= "ball"))
 #
-get_tfidf_avg(labsel = "sdsdf")
+# get_tfidf_avg(labsel = "sdsdf")
 # get_tfidf_avg(term = "ball")
 # get_tfidf_avg(label = "sport", tedddm= "ghds" )
 con.conn.commit()
