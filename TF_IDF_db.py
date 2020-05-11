@@ -14,42 +14,98 @@ try:
     print("Connection established")
 except:
     logging.error("connection failed")
+doc = [{'lebel': 'sport', 'term': 'ball', 'score': 0.09},
+       {'lebel': 'sport', 'term': 'this', 'score': 0.04},
+       {'lebel': 'sport', 'term': 'what', 'score': 0.61},
+       {'lebel': 'sport', 'term': 'paly', 'score': 0.91},
+       {'lebel': 'sport', 'term': 'python', 'score': 0.65},
+       {'lebel': 'sport', 'term': 'funny', 'score': 0.71}]
+
+
+doc2 = [{'lebel': 'sport', 'term': 'a', 'score': 0.79},
+       {'lebel': 'sport', 'term': 'this', 'score': 0.77},
+       {'lebel': 'sport', 'term': 'whata', 'score': 7.61},
+       {'lebel': 'sport', 'term': 'pagfly', 'score': 50.91},
+       {'lebel': 'sport', 'term': 'pygtfhon', 'score': 0.75},
+       {'lebel': 'sport', 'term': 'javhfa', 'score': 8.71}]
+
+
 
 cursor = conn.cursor()
 
 
 # Create  new a table
-def create_new_table(new_table, culome):
-    print(culome)
+def create_new_table(new_table, colum):
+    print(colum)
     try:
         cursor.execute(f"CREATE TABLE {new_table}"
                        "(id serial PRIMARY KEY,"
-                       f"{culome});")
-        print(f"Finished creating table {new_table} and culoms {culome}")
+                       f"{colum});")
+        print(f"Finished creating table {new_table} and culoms {colum}")
     except:
-        logging.error(f"creating table {new_table} failed and culoms {culome}")
+        logging.error(f"creating table {new_table} failed and culoms {colum}")
 
 
-def select_all(TABLE):
-    cur.execute(f"select * from {TABLE}")
+# create_new_table('tfidf_test',"label VARCHAR , term VARCHAR, score FLOAT")
 
 
-def insert_into(table='idf', culomA='term', culomB='score', valueA='naon', valueB='0'):
+# add  where
+def select_table(TABLE, colum='*'):
+    cursor.execute(f"select {colum} from {TABLE} ")
+
+
+
+def insert_into(table, culomns="term,score", values="non,0"):
     try:
-        cursor.execute(f"insert into {table} ({culomA}, {culomB}) values ('{valueA}' ,{valueB})")
-        print(f'insert into {table} ({culomA}, {culomB}) values ({valueA} ,{valueB})')
+        cursor.execute(f"insert into {table} ({culomns}) values ({values})")
+        print(f'insert into {table} ({culomns}) values ({values})')
         select_table(table)
     except:
-        logging.error("insert  failed")
-        
+        logging.error(f"insert  failed {table} ({culomns}) values ('{values}')")
+
+
+
+def save_tfidf(doc):
+    print(doc)
+    for k in doc:
+        l = k['lebel']
+        t = k['term']
+        s = k['score']
+        sql = f"SELECT term FROM tfidf_test WHERE term = '{t}'"
+        # sql = "SELECT * FROM tfidf_test ORDER BY score"
+        cursor.execute(sql)
+
+        insert_into('tfidf_test', 'label, term , score', f"'{l}','{t}',{s}")
+
+
+def updata():
+    sql = "UPDATE tfidf_test SET term = %s WHERE term = %s"
+    val = ("term", "term")
+    cursor.execute(sql, val)
+
+save_tfidf(doc2)
 
 def join_table(tableA, tableB, word):
-    cur.execute(f"select * from {tableA} as a "
+    cursor.execute(f"select * from {tableA} as a "
                 f"join {tableB} as b "
                 f"on a.{word} = b.{word}")
 
+def DELETE_SQL():
+    sql= "DROP TABLE tfidf_test"
+    # sql = "DELETE FROM tfidf_test WHERE score < 1"
+    cursor.execute(sql)
 
+# DELETE_SQL()
 conn.commit()
-[print(row) for row in cur.fetchall()]
+
+#
+# def select_table(TABLE):
+#     cursor.execute(f"select * from {TABLE}")
+# select_table("tfidf_test","term")
+select_table('tfidf_test')
+# select_table('score')
+[print(row) for row in cursor.fetchall()]
+
+cursor.close()
 
 conn.close()
