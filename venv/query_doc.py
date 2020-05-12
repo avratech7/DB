@@ -3,7 +3,14 @@ import connect as con
 cur = con.cursor
 
 
+def save_docs_into(doc, label):
+    string_label = ""
 
+    for i in label:
+        string_label = i
+
+    for i in doc:
+        if not (i == ""):
 def get_docs():
         cur.execute("""SELECT doc, label FROM all_docs""")
         rows = cur.fetchall()
