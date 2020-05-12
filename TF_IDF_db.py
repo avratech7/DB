@@ -14,14 +14,19 @@ try:
     print("Connection established")
 except:
     logging.error("connection failed")
-doc = [{'lebel': 'sport', 'term': 'ball', 'score': 0.59},
+
+doc1 = [{'lebel': 'sport', 'term': 'ball', 'score': 0.59},
        {'lebel': 'sport', 'term': 'this', 'score': 0.04},
        {'lebel': 'sport', 'term': 'what', 'score': 0.61},
        {'lebel': 'sport', 'term': 'paly', 'score': 0.91},
-       {'lebel': 'sport', 'term': 'python', 'score': 0.65},
-       {'lebel': 'sport', 'term': 'funny', 'score': 0.71}]
+       {'lebel': 'sport', 'term': 'as', 'score': 0.65},
+       {'lebel': 'sport', 'term': 'hot', 'score': 0.04},
+       {'lebel': 'sport', 'term': 'cool', 'score': 0.61},
+       {'lebel': 'sport', 'term': 'gams', 'score': 0.91},
+       {'lebel': 'sport', 'term': 'as', 'score': 0.65},
+       {'lebel': 'sport', 'term': 'goooo', 'score': 0.71}]
 
-doc2 = [{'lebel': 'sport', 'term': 'a', 'score': 0.79},
+doc2 = [{'lebel': 'sport', 'term': 'a', 'score': 0.99},
         {'lebel': 'sport', 'term': 'this', 'score': 5.77},
         {'lebel': 'sport', 'term': 'whata', 'score': 7.61},
         {'lebel': 'sport', 'term': 'pagfly', 'score': 50.91},
@@ -43,11 +48,11 @@ def create_new_table(new_table, colum):
         logging.error(f"creating table {new_table} failed and culoms {colum}")
 
 
-# create_new_table('tfidf_test',"label VARCHAR , term VARCHAR, score FLOAT")
+'''create_new_table('tfidf_test',"label VARCHAR , term VARCHAR, score FLOAT")'''
 
 
 # add  where
-def select_table(TABLE, colum='*'):
+def get_table(TABLE, colum='*'):
     cursor.execute(f"select {colum} from {TABLE} ")
 
 
@@ -55,7 +60,7 @@ def insert_into(table, culomns="term,score", values="non,0"):
     try:
         cursor.execute(f"insert into {table} ({culomns}) values ({values})")
         print(f'insert into {table} ({culomns}) values ({values})')
-        select_table(table)
+        get_table(table)
     except:
         logging.error(f"insert  failed {table} ({culomns}) values ('{values}')")
 
@@ -66,32 +71,33 @@ def updata(term, score):
                    "WHERE term=%s", (score, term))
 
 
-def get_row_by_term(t):
-    cursor.execute(f"select *  from tfidf_test " f"WHERE term ='{t}'")
+def get_row_by_colum(colum,t):
+    cursor.execute(f"select *  from tfidf_test " f"WHERE {colum} ='{t}'")
     return cursor.fetchone()
 
 
-def save_tfidf(doc2):
+def save_tfidf(doc):
     print(doc)
     for k in doc:
         l = k['lebel']
         t = k['term']
         s = k['score']
 
-        sql = get_row_by_term(t)
-        print(sql, t)
+        sql = get_row_by_colum('term',t)
+        # print(sql, t)
         if sql == None:
+            print(sql, t)
             insert_into('tfidf_test', 'label, term , score', f"'{l}','{t}',{s}")
         else:
             old_score = (sql[3])
             # print(type(old_s))
-            print("old score", sql, "new  score ", old_score + s / 2)
-            updata(t, (old_score + s / 2))
+            print("old score", sql, "new  score ", (old_score + s )/ 2)
+            updata(t, ((old_score) + s) / 2)
 
-        # sql = "SELECT * FROM tfidf_test ORDER BY score"
+    cursor.execute("SELECT * FROM tfidf_test ORDER BY score")
 
 
-save_tfidf(doc)
+save_tfidf(doc2)
 
 
 def join_table(tableA, tableB, word):
@@ -102,19 +108,17 @@ def join_table(tableA, tableB, word):
 
 def DELETE_SQL():
     sql = "DROP TABLE tfidf_test"
-    # sql = "DELETE FROM tfidf_test WHERE score < 1"
+    sql = "DELETE FROM tfidf_test WHERE score < 1"
     cursor.execute(sql)
 
 
 # DELETE_SQL()
 conn.commit()
 
-#
-# def select_table(TABLE):
-#     cursor.execute(f"select * from {TABLE}")
+
 # select_table("tfidf_test","term")
-select_table('tfidf_test')
-# select_table('score')
+get_table('tfidf_test')
+# get_table('score')
 [print(row) for row in cursor.fetchall()]
 
 cursor.close()
