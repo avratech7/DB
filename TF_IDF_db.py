@@ -71,8 +71,8 @@ def updata(term, score, table="tfidf_test", culom_set='score', where_itmes="term
                    f"WHERE {where_itmes} = %s", (score, term))
 
 
-def get_row_by_item(colum, item):
-    cursor.execute(f"select *  from tfidf_test " f"WHERE {colum} ='{item}'")
+def get_row_by_item(colum, item, table = "tfidf_test"):
+    cursor.execute(f"select *  from {table} " f"WHERE {colum} ='{item}'")
     return cursor.fetchone()
 
 
