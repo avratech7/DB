@@ -20,8 +20,7 @@ def save_tfidf(list_tfidf):
         except:
              print(sys.exc_info()[1])
 
-
+con.conn.commit()
 if __name__ == '___main__':
-    con.conn.commit()
     cur.close()
     con.conn.close()

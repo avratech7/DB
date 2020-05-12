@@ -94,8 +94,8 @@ def get_tfidf_avg(**dictionery):
             except:
                 print(f" is not key Only label or term must be defined")
 
-
+con.conn.commit()
 if __name__ == '___main__':
-    con.conn.commit()
+
     cur.close()
     con.conn.close()

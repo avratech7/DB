@@ -37,9 +37,9 @@ def get_count_doc(label):
     cur.execute(f"""SELECT * FROM all_docs WHERE label = '{label}';""")
     return cur.rowcount
 
-
+con.conn.commit()
 if __name__ == '___main__':
 
-    con.conn.commit()
+
     cur.close()
     con.conn.close()

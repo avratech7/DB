@@ -111,8 +111,9 @@ def create_score_table():
 list_definition_for_all_docs = ["serial PRIMARY KEY","VARCHAR","VARCHAR"]
 list_definition_for_tfidf = ["VARCHAR","VARCHAR","FLOAT"]
 
+conn.commit()
 if __name__ == '__main__':
-    conn.commit()
+
     cursor.close()
     conn.close()
 
