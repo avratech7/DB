@@ -11,6 +11,7 @@ def save_docs_into(doc, label):
 
     for i in doc:
         if not (i == ""):
+             save_docs(i, string_label)
 def get_docs():
         cur.execute("""SELECT doc, label FROM all_docs""")
         rows = cur.fetchall()
