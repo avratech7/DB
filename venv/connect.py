@@ -59,18 +59,18 @@ def update_were(table_name,cloum_name,value,cloum_to_comp,value_to_comp):
     cursor.execute(f"UPDATE {table_name} SET {cloum_name} = {value} WHERE {cloum_to_comp} = '{value_to_comp}'")
 
 
-def print_tables(select_string):
+def return_tables(select_string):
     cursor.execute(select_string)
     colnames = [desc[0] for desc in cursor.description]
     rows = cursor.fetchall()
     result = []
     [result.append(dict(zip(colnames, row))) for row in rows]
-    [print(item) for item in result]
+    return result
 
 
 def select_all(TABLE='NEW_TABLE'):
     try:
-        print_tables(f"select * from {TABLE}")
+        return_tables(f"select * from {TABLE}")
     except psycopg2.errors.UndefinedTable as p:
         print(p)
 
@@ -88,13 +88,11 @@ def create_score_table():
 
 list_definition_for_all_docs = ["serial PRIMARY KEY","VARCHAR","VARCHAR"]
 list_definition_for_tfidf = ["VARCHAR","VARCHAR","FLOAT"]
-# drop_table("score")
-# Create_a_three_column_table("all_docs",["doc_id","doc","label"],list_definition_for_all_docs)
-# Create_a_three_column_table("tfidf",["term","label","score"],list_definition_for_tfidf)
-# create_score_table()
 
-
-conn.commit()
+if __name__ == '__main__':
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 
 

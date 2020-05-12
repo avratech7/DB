@@ -1,5 +1,3 @@
-import psycopg2
-import logging
 import sys
 import connect as con
 cur = con.cursor
@@ -24,9 +22,7 @@ def save_tfidf_avg_dict(list_of_dictionaries):
                 cur.execute( f"UPDATE score SET ({dictionaries[term][0]}, verison_{dictionaries[term][0]}) = ({dictionaries[term][1]},1) WHERE term = '{term}'")
             else:
                 updade_verison = current_verison[0] + 1
-                # print((current_verison[0] * current_verison[1]) + dictionaries[term][1])
                 current_avg =  ((current_verison[0] * current_verison[1]) + dictionaries[term][1]) / updade_verison
-                # print(current_avg)
                 cur.execute( f"UPDATE score SET ({dictionaries[term][0]}, verison_{dictionaries[term][0]}) = ({current_avg},{updade_verison}) WHERE term = '{term}'")
 
 
@@ -48,9 +44,7 @@ def save_tfidf_avg(list_of_listes):
                 cur.execute(f"UPDATE score SET ({_list[1]}, verison_{_list[1]}) = ({_list[2]},1) WHERE term = '{term}'")
             else:
                 updade_verison = current_verison[0] + 1
-                # print((current_verison[0] * current_verison[1]) + dictionaries[term][1])
                 current_avg =  ((current_verison[0] * current_verison[1]) + _list[2]) / updade_verison
-                # print(current_avg)
                 cur.execute( f"UPDATE score SET ({_list[1]}, verison_{_list[1]}) = ({current_avg},{updade_verison}) WHERE term = '{term}'")
 
 
@@ -58,7 +52,7 @@ def save_tfidf_avg(list_of_listes):
 def get_tfidf_avg(**dictionery):
 
     if not dictionery:
-        con.print_tables("""SELECT * FROM score""")
+      return  con.return_tables("""SELECT * FROM score""")
     else:
         keys = list(dictionery.keys())
         term = ""
@@ -73,7 +67,7 @@ def get_tfidf_avg(**dictionery):
                 try:
                     cur.execute(f"""SELECT * FROM score WHERE term = '{dictionery[term]}';""")
                     if cur.rowcount > 0:
-                        con.print_tables(f"""SELECT * FROM score WHERE term = '{dictionery[term]}';""")
+                      return  con.return_tables(f"""SELECT * FROM score WHERE term = '{dictionery[term]}';""")
                     else:
                         print("The term does not exist")
                 except:
@@ -81,7 +75,7 @@ def get_tfidf_avg(**dictionery):
 
             elif label == "label":
                 try:
-                    con.print_tables(f"""SELECT term, {dictionery[label]} FROM score;""""")
+                   return con.return_tables(f"""SELECT term, {dictionery[label]} FROM score;""""")
                 except:
                     print(sys.exc_info()[1])
             else:
@@ -101,22 +95,7 @@ def get_tfidf_avg(**dictionery):
                 print(f" is not key Only label or term must be defined")
 
 
-
-
-
-
-list_of_dictionaries =[{"ball":["sport",0.4]}, {"corona":["medicine",0.3]},{"rachel":["other",0.12]}]
-list_of_listes =[["cat","sport",0.1], ["cat","medicine",0.01],["play","other",0.12]]
-
-save_tfidf_avg(list_of_listes)
-
-get_tfidf_avg(label = "sport")
-get_tfidf_avg(term = "cat")
-print(get_tfidf_avg(label = "sport", term= "ball"))
-#
-# get_tfidf_avg(labsel = "sdsdf")
-# get_tfidf_avg(term = "ball")
-# get_tfidf_avg(label = "sport", tedddm= "ghds" )
-con.conn.commit()
-cur.close()
-con.conn.close()
+if __name__ == '___main__':
+    con.conn.commit()
+    cur.close()
+    con.conn.close()
