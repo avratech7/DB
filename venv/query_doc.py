@@ -3,7 +3,8 @@ import connect as con
 import query_db
 cur = con.cursor
 
-
+# (doc=["string","hfhjf"]
+# label="string")
 def save_docs_into(doc, label):
     string_label = ""
 
