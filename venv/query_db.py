@@ -3,7 +3,7 @@ import connect as con
 cur = con.cursor
 
 
-            save_docs(i, string_label)
+           
 def save_docs(doc,label):
         try:
             cur.execute(f"INSERT INTO all_docs (doc,label) VALUES ('{doc}','{label}') ")
