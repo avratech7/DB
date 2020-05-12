@@ -2,14 +2,7 @@ import sys
 import connect as con
 cur = con.cursor
 
-def save_docs_into(doc, label):
-    string_label = ""
 
-    for i in label:
-        string_label = i
-
-    for i in doc:
-        if not (i == ""):
             save_docs(i, string_label)
 def save_docs(doc,label):
         try:
