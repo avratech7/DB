@@ -1,5 +1,6 @@
 import sys
 import connect as con
+import query_db
 cur = con.cursor
 
 
@@ -11,7 +12,7 @@ def save_docs_into(doc, label):
 
     for i in doc:
         if not (i == ""):
-             save_docs(i, string_label)
+             query_db.save_docs(i, string_label)
 def get_docs():
         cur.execute("""SELECT doc, label FROM all_docs""")
         rows = cur.fetchall()
