@@ -14,22 +14,19 @@ try:
     print("Connection established")
 except:
     logging.error("connection failed")
-doc = [{'lebel': 'sport', 'term': 'ball', 'score': 0.09},
+doc = [{'lebel': 'sport', 'term': 'ball', 'score': 0.59},
        {'lebel': 'sport', 'term': 'this', 'score': 0.04},
        {'lebel': 'sport', 'term': 'what', 'score': 0.61},
        {'lebel': 'sport', 'term': 'paly', 'score': 0.91},
        {'lebel': 'sport', 'term': 'python', 'score': 0.65},
        {'lebel': 'sport', 'term': 'funny', 'score': 0.71}]
 
-
 doc2 = [{'lebel': 'sport', 'term': 'a', 'score': 0.79},
-       {'lebel': 'sport', 'term': 'this', 'score': 0.77},
-       {'lebel': 'sport', 'term': 'whata', 'score': 7.61},
-       {'lebel': 'sport', 'term': 'pagfly', 'score': 50.91},
-       {'lebel': 'sport', 'term': 'pygtfhon', 'score': 0.75},
-       {'lebel': 'sport', 'term': 'javhfa', 'score': 8.71}]
-
-
+        {'lebel': 'sport', 'term': 'this', 'score': 5.77},
+        {'lebel': 'sport', 'term': 'whata', 'score': 7.61},
+        {'lebel': 'sport', 'term': 'pagfly', 'score': 50.91},
+        {'lebel': 'sport', 'term': 'pygtfhon', 'score': 5.75},
+        {'lebel': 'sport', 'term': 'javhfa', 'score': 8.71}]
 
 cursor = conn.cursor()
 
@@ -54,7 +51,6 @@ def select_table(TABLE, colum='*'):
     cursor.execute(f"select {colum} from {TABLE} ")
 
 
-
 def insert_into(table, culomns="term,score", values="non,0"):
     try:
         cursor.execute(f"insert into {table} ({culomns}) values ({values})")
@@ -64,36 +60,51 @@ def insert_into(table, culomns="term,score", values="non,0"):
         logging.error(f"insert  failed {table} ({culomns}) values ('{values}')")
 
 
+def updata(term, score):
+    cursor.execute("UPDATE tfidf_test "
+                   "SET score=%s "
+                   "WHERE term=%s", (score, term))
 
-def save_tfidf(doc):
+
+def get_row_by_term(t):
+    cursor.execute(f"select *  from tfidf_test " f"WHERE term ='{t}'")
+    return cursor.fetchone()
+
+
+def save_tfidf(doc2):
     print(doc)
     for k in doc:
         l = k['lebel']
         t = k['term']
         s = k['score']
-        sql = f"SELECT term FROM tfidf_test WHERE term = '{t}'"
+
+        sql = get_row_by_term(t)
+        print(sql, t)
+        if sql == None:
+            insert_into('tfidf_test', 'label, term , score', f"'{l}','{t}',{s}")
+        else:
+            old_score = (sql[3])
+            # print(type(old_s))
+            print("old score", sql, "new  score ", old_score + s / 2)
+            updata(t, (old_score + s / 2))
+
         # sql = "SELECT * FROM tfidf_test ORDER BY score"
-        cursor.execute(sql)
-
-        insert_into('tfidf_test', 'label, term , score', f"'{l}','{t}',{s}")
 
 
-def updata():
-    sql = "UPDATE tfidf_test SET term = %s WHERE term = %s"
-    val = ("term", "term")
-    cursor.execute(sql, val)
+save_tfidf(doc)
 
-save_tfidf(doc2)
 
 def join_table(tableA, tableB, word):
     cursor.execute(f"select * from {tableA} as a "
-                f"join {tableB} as b "
-                f"on a.{word} = b.{word}")
+                   f"join {tableB} as b "
+                   f"on a.{word} = b.{word}")
+
 
 def DELETE_SQL():
-    sql= "DROP TABLE tfidf_test"
+    sql = "DROP TABLE tfidf_test"
     # sql = "DELETE FROM tfidf_test WHERE score < 1"
     cursor.execute(sql)
+
 
 # DELETE_SQL()
 conn.commit()
