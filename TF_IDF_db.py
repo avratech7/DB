@@ -71,8 +71,8 @@ def updata(term, score):
                    "WHERE term=%s", (score, term))
 
 
-def get_row_by_colum(colum,t):
-    cursor.execute(f"select *  from tfidf_test " f"WHERE {colum} ='{t}'")
+def get_row_by_item(colum,item):
+    cursor.execute(f"select *  from tfidf_test " f"WHERE {colum} ='{item}'")
     return cursor.fetchone()
 
 
@@ -83,8 +83,9 @@ def save_tfidf(doc):
         t = k['term']
         s = k['score']
 
-        sql = get_row_by_colum('term',t)
-        # print(sql, t)
+        sql = get_row_by_item('term',t)
+        # print
+        
         if sql == None:
             print(sql, t)
             insert_into('tfidf_test', 'label, term , score', f"'{l}','{t}',{s}")
